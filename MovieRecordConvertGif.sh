@@ -44,7 +44,7 @@ cg () {
 				t=${OPTARG}
 				;;				
 			h)
-				usage
+				usage && return 0
 				;;
 		esac
 	done
