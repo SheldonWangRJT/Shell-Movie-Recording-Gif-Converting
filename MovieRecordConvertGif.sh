@@ -13,29 +13,26 @@ rv () {
 
 cg () {
 	usage() { 
-		echo "Usage: $0"
+		echo "Usage:"
 		echo "[-s start time, default 00:00:00, watch format]"
 		echo "[-t end time, default null, watch format]"
 		echo "[-n input video name, default in.mov]"
-		echo "[-st <1|2>], 1, for iPhone7, 2 for iPhoneX, default 1]"
+		echo "[-y <1|2>], 1, for iPhone7, 2 for iPhoneX, default 1]"
 		echo "[-r frame rate, default 8, use frame rate to adjust output file size]"
+		exit 0
 	}
 
-	s="00:00:00"
-	n="in.mov"
-	st="1"
-	r="10"
-	while getopts ":s:t:n:sy:r:h" o; do
-		case "${o}" in
+	while getopts ":s:t:n:y:r:h" o; do
+		case ${o} in
 			s)
 				s=${OPTARG}
 				;;
 			n)
 				n=${OPTARG}
 				;;
-			st)
-				st=${OPTARG}
-				((st == 1 || st == 2)) || usage
+			y)
+				y=${OPTARG}
+				((y == 1 || y == 2))
 				;;
 			r)
 				r=${OPTARG}
@@ -44,18 +41,35 @@ cg () {
 				t=${OPTARG}
 				;;				
 			h)
-				usage && return 0
+				usage
 				;;
 		esac
 	done
 	shift $((OPTIND-1))
 
-	if (( st == 1 )); then
+	if [ -z "$s" ]; then 
+		s="00:00:00"
+	fi
+	if [ -z "$n" ]; then
+		n="in.mov"
+	fi
+	if [ -z "$y" ]; then
+		y="1"
+	fi
+	if [ -z "$r" ]; then 
+		r="10"
+	fi
+
+	echo ${y}
+	if (( y == 1 )); then
 		echo "Choosing regular screen scale as 512:909"
 		ratio="512:909"
-	else
+	elif (( y == 2 )); then
 		echo "Chossing iPhoneX screen scale as 512:1024"
 		ratio="512:1024"
+	else
+		usage
+		exit 0
 	fi
 	
 	if [ -z "${t}" ]; then
@@ -73,4 +87,5 @@ cg () {
 	echo "ratio = ${ratio}"
 	
 	echo "Gif is stored as ~/Desktop/output.gif 🤡 🤡 🤡 "
+	exit 1
 }
